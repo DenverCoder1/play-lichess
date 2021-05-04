@@ -124,5 +124,7 @@ To run tests (pytest)
 
 To lint (flake8):
 
+``pip install flake8==3.8.4 pytest``
+
 ``python setup.py lint``
 
