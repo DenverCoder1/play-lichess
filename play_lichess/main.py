@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 import requests
 from requests.models import Response
 
@@ -22,6 +22,7 @@ def __get_form_data(
     minutes: float = 5,
     increment: int = 8,
     days: int = 2,
+    ai_level: Optional[int] = None,
 ) -> Dict[str, Any]:
     return {
         "variant": variant.data,
@@ -30,6 +31,7 @@ def __get_form_data(
         "time": minutes,  # only for real time
         "increment": increment,  # only for real time
         "days": days,  # only for correspondence
+        "level": ai_level,  # only for AI games
         "color": color.data,
     }
 
@@ -41,6 +43,7 @@ def create(
     minutes: float = 5,
     increment: int = 8,
     days: int = 2,
+    ai_level: Optional[int] = None,
 ) -> Match:
     """Start a match that two players can join
     This method allows parameters for Real-Time, Correspondence, or Unlimited matches
@@ -57,6 +60,8 @@ def create(
         Amount of seconds to increment the clock each turn when time_mode is REALTIME
     :param days: :class:`int`
         The number of days for the match when time_mode is CORRESPONDENCE
+    :param ai_level: Optional[:class:`int`]
+        'None' to play with a friend or Stockfish Level 1-8 to play against AI
     """
 
     # validate parameters
@@ -68,8 +73,11 @@ def create(
         raise BadArgumentError("'days' must be a positive whole number")
 
     # request match
-    endpoint_url = "https://lichess.org/setup/friend"
-    data = __get_form_data(time_mode, variant, color, minutes, increment, days)
+    endpoint_url = "https://lichess.org/"
+    endpoint_url += "setup/friend" if not ai_level else "setup/ai"
+    data = __get_form_data(
+        time_mode, variant, color, minutes, increment, days, ai_level
+    )
     headers = {"User-Agent": "Mozilla/5.0"}
     response = requests.post(endpoint_url, data=data, headers=headers)
 
@@ -93,6 +101,7 @@ def real_time(
     increment: int = 8,
     variant: Variant = Variant.STANDARD,
     color: Color = Color.RANDOM,
+    ai_level: Optional[int] = None,
 ) -> Match:
     """Start a live match that two players can join
 
@@ -104,6 +113,8 @@ def real_time(
         The variant of the match (STANDARD, ANTICHESS, CHESS960, etc.)
     :param color: :class:`Color`
         The color that will be assigned to the first player that joins (WHITE, BLACK, or RANDOM)
+    :param ai_level: Optional[:class:`int`]
+        'None' to play with a friend or Stockfish Level 1-8 to play against AI
     """
     return create(
         time_mode=TimeMode.REALTIME,
@@ -111,6 +122,7 @@ def real_time(
         color=color,
         minutes=minutes,
         increment=increment,
+        ai_level=ai_level,
     )
 
 
@@ -118,6 +130,7 @@ def correspondence(
     days: int = 2,
     variant: Variant = Variant.STANDARD,
     color: Color = Color.RANDOM,
+    ai_level: Optional[int] = None,
 ) -> Match:
     """Start a correspondence match that two players can join
 
@@ -127,18 +140,22 @@ def correspondence(
         The variant of the match (STANDARD, ANTICHESS, CHESS960, etc.)
     :param color: :class:`Color`
         The color that will be assigned to the first player that joins (WHITE, BLACK, or RANDOM)
+    :param ai_level: Optional[:class:`int`]
+        'None' to play with a friend or Stockfish Level 1-8 to play against AI
     """
     return create(
         time_mode=TimeMode.CORRESPONDENCE,
         variant=variant,
         color=color,
         days=days,
+        ai_level=ai_level,
     )
 
 
 def unlimited(
     variant: Variant = Variant.STANDARD,
     color: Color = Color.RANDOM,
+    ai_level: Optional[int] = None,
 ) -> Match:
     """Start a unlimited time match that two players can join
 
@@ -146,9 +163,12 @@ def unlimited(
         The variant of the match (STANDARD, ANTICHESS, CHESS960, etc.)
     :param color: :class:`Color`
         The color that will be assigned to the first player that joins (WHITE, BLACK, or RANDOM)
+    :param ai_level: Optional[:class:`int`]
+        'None' to play with a friend or Stockfish Level 1-8 to play against AI
     """
     return create(
         time_mode=TimeMode.UNLIMITED,
         variant=variant,
         color=color,
+        ai_level=ai_level,
     )

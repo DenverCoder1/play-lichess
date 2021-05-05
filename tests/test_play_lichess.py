@@ -26,6 +26,15 @@ def test_create_unlimited():
     assert match.variant == Variant.STANDARD
 
 
+def test_create_ai_game():
+    match = play_lichess.create(TimeMode.UNLIMITED, ai_level=3)
+    assert match.time_mode == TimeMode.UNLIMITED
+    assert len(match.link) == len("https://lichess.org/12345678")
+    assert match.title == "Play Stockfish level 3 • lichess.org"
+    assert match.color == Color.RANDOM
+    assert match.variant == Variant.STANDARD
+
+
 def test_real_time_invalid_minutes():
     with pytest.raises(BadArgumentError):
         play_lichess.real_time(
