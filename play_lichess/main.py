@@ -50,7 +50,8 @@ def __create_match(
     return Match(title, redirect_url, variant, time_mode, color)
 
 
-def __get_html_title(response: Response):
+def __get_html_title(response: Response) -> str:
+    """Returns the title content of the response text given the Response"""
     text = response.text
     start = text.find("<title>") + len("<title>")
     end = text.find("</title>")
