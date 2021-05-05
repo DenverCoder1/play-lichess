@@ -1,4 +1,3 @@
-from typing import Dict
 import requests
 from requests.models import Response
 
