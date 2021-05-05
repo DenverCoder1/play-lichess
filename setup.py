@@ -1,5 +1,6 @@
 # /usr/bin/env python
 import os
+from typing import List
 from setuptools import setup
 from setuptools.command.test import test as TestCommand, Command
 
@@ -23,7 +24,7 @@ class LintCommand(Command):
     """
 
     description = "Run flake8 on modules registered in setuptools"
-    user_options = []
+    user_options: List[str] = []
 
     def initialize_options(self):
         # must override
@@ -59,7 +60,7 @@ with open("requirements.txt") as fh:
 
 setup(
     name="play-lichess",
-    version="0.0.3",
+    version="0.1.1",
     author="Jonah Lawrence",
     author_email="jonah@freshidea.com",
     description="Module for creating match links on Lichess that players can join",
