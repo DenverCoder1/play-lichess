@@ -69,7 +69,7 @@ setup(
     project_urls={
         "Bug Tracker": "https://github.com/DenverCoder1/play-lichess/issues",
     },
-    packages=["play-lichess"],
+    packages=["play_lichess"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
