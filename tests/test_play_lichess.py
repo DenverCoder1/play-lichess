@@ -106,3 +106,17 @@ def test_create_unlimited():
     assert match.title == "Correspondence casual Chess • Open challenge • lichess.org"
     assert match.color == Color.RANDOM
     assert match.variant == Variant.STANDARD
+
+
+def test_create_custom():
+    match = play_lichess.create(
+        TimeMode.CORRESPONDENCE, variant=Variant.HORDE, color=Color.BLACK, days=3
+    )
+    assert match.time_mode == TimeMode.CORRESPONDENCE
+    assert len(match.link) == len("https://lichess.org/12345678")
+    assert (
+        match.title
+        == "Correspondence Horde casual Chess • Open challenge • lichess.org"
+    )
+    assert match.color == Color.BLACK
+    assert match.variant == Variant.HORDE
