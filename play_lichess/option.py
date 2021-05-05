@@ -13,7 +13,11 @@ class Option(NamedTuple):
     @classmethod
     def find(cls, description: str) -> "Option":
         """Get an option from a description
-        eg. `Variant.from_description("Antichess")`
+
+        Examples:
+        ``Variant.find("Antichess")``
+        ``Color.find("White")``
+        ``TimeMode.find("Real-time")``
         """
         options: List[Option] = list(cls)
         for option in options:
