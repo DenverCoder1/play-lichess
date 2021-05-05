@@ -1,3 +1,4 @@
+from typing import Any, Dict
 import requests
 from requests.models import Response
 
@@ -12,6 +13,25 @@ def __get_html_title(response: Response) -> str:
     start = text.find("<title>") + len("<title>")
     end = text.find("</title>")
     return text[start:end]
+
+
+def __get_form_data(
+    time_mode: TimeMode = TimeMode.REALTIME,
+    variant: Variant = Variant.STANDARD,
+    color: Color = Color.RANDOM,
+    minutes: float = 5,
+    increment: int = 8,
+    days: int = 2,
+) -> Dict[str, Any]:
+    return {
+        "variant": variant.data,
+        "fen": "",
+        "timeMode": time_mode.data,
+        "time": minutes,  # only for real time
+        "increment": increment,  # only for real time
+        "days": days,  # only for correspondence
+        "color": color.data,
+    }
 
 
 def create(
@@ -49,21 +69,9 @@ def create(
 
     # request match
     endpoint_url = "https://lichess.org/setup/friend"
-    data = {
-        "variant": variant.data,
-        "fen": "",
-        "timeMode": time_mode.data,
-        "time": minutes,  # only for real time
-        "increment": increment,  # only for real time
-        "days": days,  # only for correspondence
-        "color": color.data,
-    }
+    data = __get_form_data(time_mode, variant, color, minutes, increment, days)
     headers = {"User-Agent": "Mozilla/5.0"}
-    response = requests.post(
-        endpoint_url,
-        data=data,
-        headers=headers,
-    )
+    response = requests.post(endpoint_url, data=data, headers=headers)
 
     # get the title from the response
     title = __get_html_title(response)
