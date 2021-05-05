@@ -79,3 +79,30 @@ def test_unlimited():
     assert match.title == "Correspondence casual Chess • Open challenge • lichess.org"
     assert match.color == Color.RANDOM
     assert match.variant == Variant.STANDARD
+
+
+def test_create():
+    match = play_lichess.create()
+    assert match.time_mode == TimeMode.REALTIME
+    assert len(match.link) == len("https://lichess.org/12345678")
+    assert match.title == "Rapid (5+8) casual Chess • Open challenge • lichess.org"
+    assert match.color == Color.RANDOM
+    assert match.variant == Variant.STANDARD
+
+
+def test_create_correspondence():
+    match = play_lichess.create(TimeMode.CORRESPONDENCE)
+    assert match.time_mode == TimeMode.CORRESPONDENCE
+    assert len(match.link) == len("https://lichess.org/12345678")
+    assert match.title == "Correspondence casual Chess • Open challenge • lichess.org"
+    assert match.color == Color.RANDOM
+    assert match.variant == Variant.STANDARD
+
+
+def test_create_unlimited():
+    match = play_lichess.create(TimeMode.UNLIMITED)
+    assert match.time_mode == TimeMode.UNLIMITED
+    assert len(match.link) == len("https://lichess.org/12345678")
+    assert match.title == "Correspondence casual Chess • Open challenge • lichess.org"
+    assert match.color == Color.RANDOM
+    assert match.variant == Variant.STANDARD

@@ -14,6 +14,7 @@ Python module for creating match links on Lichess that two players can join
     - [Start a correspondence match](#start-a-correspondence-match)
     - [Start an unlimited time match](#start-an-unlimited-time-match)
     - [Specify game options](#specify-game-options)
+    - [Alternate syntax](#alternate-syntax)
   - [🔧 Options](#-options)
     - [Real-time](#real-time)
     - [Correspondence](#correspondence)
@@ -88,6 +89,19 @@ print(match.title)  # Blitz (6+0) casual Chess • Open challenge • lichess.or
 print(match.variant)  # Antichess
 print(match.color)  # White
 print(match.time_mode)  # Real-time
+```
+
+### Alternate syntax
+
+```py
+import play_lichess
+from play_lichess.constants import TimeMode, Variant, Color
+
+match1 = play_lichess.create(time_mode=TimeMode.REALTIME, minutes=6, increment=0)
+
+match2 = play_lichess.create(time_mode=TimeMode.CORRESPONDENCE, days=3)
+
+match3 = play_lichess.create(TimeMode.UNLIMITED)
 ```
 
 ## 🔧 Options

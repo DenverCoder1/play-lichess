@@ -1,3 +1,4 @@
+from typing import Dict
 import requests
 from requests.models import Response
 
@@ -5,14 +6,16 @@ from .constants import Color, TimeMode, Variant
 from .exceptions import BadArgumentError, HttpError
 from .match import Match
 
+DEFAULTS: Dict[str, int] = {"minutes": 5, "increment": 8, "days": 2}
 
-def __create_match(
+
+def __request_match(
     time_mode: TimeMode,
     variant: Variant,
     color: Color,
-    minutes: float = 5,
-    increment: int = 8,
-    days: int = 2,
+    minutes: float = DEFAULTS["minutes"],
+    increment: int = DEFAULTS["increment"],
+    days: int = DEFAULTS["days"],
 ) -> Match:
     """Create an invite for a new game on Lichess
     Return a match containing the link and additional information
@@ -59,8 +62,8 @@ def __get_html_title(response: Response) -> str:
 
 
 def real_time(
-    minutes: float = 5,
-    increment: int = 8,
+    minutes: float = DEFAULTS["minutes"],
+    increment: int = DEFAULTS["increment"],
     variant: Variant = Variant.STANDARD,
     color: Color = Color.RANDOM,
 ) -> Match:
@@ -73,13 +76,9 @@ def real_time(
     :param variant: :class:`Variant`
         The variant of the match (STANDARD, ANTICHESS, CHESS960, etc.)
     :param color: :class:`Color`
-        The color that will be assigned to the first player to join the match
+        The color that will be assigned to the first player that joins (WHITE, BLACK, or RANDOM)
     """
-    if minutes <= 0:
-        raise BadArgumentError("'minutes' must be a positive number")
-    if not isinstance(increment, int) or increment < 0:
-        raise BadArgumentError("'increment' must be a non-negative whole number")
-    return __create_match(
+    return create(
         time_mode=TimeMode.REALTIME,
         variant=variant,
         color=color,
@@ -89,7 +88,7 @@ def real_time(
 
 
 def correspondence(
-    days: int = 2,
+    days: int = DEFAULTS["days"],
     variant: Variant = Variant.STANDARD,
     color: Color = Color.RANDOM,
 ) -> Match:
@@ -100,11 +99,9 @@ def correspondence(
     :param variant: :class:`Variant`
         The variant of the match (STANDARD, ANTICHESS, CHESS960, etc.)
     :param color: :class:`Color`
-        The color that will be assigned to the first player to join the match
+        The color that will be assigned to the first player that joins (WHITE, BLACK, or RANDOM)
     """
-    if not isinstance(days, int) or days <= 0:
-        raise BadArgumentError("'minutes' must be a positive whole number")
-    return __create_match(
+    return create(
         time_mode=TimeMode.CORRESPONDENCE,
         variant=variant,
         color=color,
@@ -121,10 +118,50 @@ def unlimited(
     :param variant: :class:`Variant`
         The variant of the match (STANDARD, ANTICHESS, CHESS960, etc.)
     :param color: :class:`Color`
-        The color that will be assigned to the first player to join the match
+        The color that will be assigned to the first player that joins (WHITE, BLACK, or RANDOM)
     """
-    return __create_match(
+    return create(
         time_mode=TimeMode.UNLIMITED,
         variant=variant,
         color=color,
+    )
+
+
+def create(
+    time_mode: TimeMode = TimeMode.REALTIME,
+    variant: Variant = Variant.STANDARD,
+    color: Color = Color.RANDOM,
+    minutes: float = DEFAULTS["minutes"],
+    increment: int = DEFAULTS["increment"],
+    days: int = DEFAULTS["days"],
+) -> Match:
+    """Start a match that two players can join
+    This method allows parameters for Real-Time, Correspondence, or Unlimited matches
+
+    :param time_mode: :class:`TimeMode`
+        The time mode of the match (REALTIME, CORRESPONDENCE, or UNLIMITED)
+    :param variant: :class:`Variant`
+        The variant of the match (STANDARD, ANTICHESS, CHESS960, etc.)
+    :param color: :class:`Color`
+        The color that will be assigned to the first player that joins (WHITE, BLACK, or RANDOM)
+    :param minutes: :class:`float`
+        The number of minutes for the match when time_mode is REALTIME
+    :param increment: :class:`int`
+        Amount of seconds to increment the clock each turn when time_mode is REALTIME
+    :param days: :class:`int`
+        The number of days for the match when time_mode is CORRESPONDENCE
+    """
+    if minutes <= 0:
+        raise BadArgumentError("'minutes' must be a positive number")
+    if not isinstance(increment, int) or increment < 0:
+        raise BadArgumentError("'increment' must be a non-negative whole number")
+    if not isinstance(days, int) or days <= 0:
+        raise BadArgumentError("'days' must be a positive whole number")
+    return __request_match(
+        time_mode=time_mode,
+        variant=variant,
+        color=color,
+        minutes=minutes,
+        days=days,
+        increment=increment,
     )
