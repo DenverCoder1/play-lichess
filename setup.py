@@ -59,7 +59,7 @@ with open("requirements.txt") as fh:
 
 setup(
     name="play-lichess",
-    version="0.0.1",
+    version="0.0.2",
     author="Jonah Lawrence",
     author_email="jonah@freshidea.com",
     description="Module for creating match links on Lichess that players can join",
