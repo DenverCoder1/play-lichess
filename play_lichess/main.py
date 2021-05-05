@@ -1,4 +1,5 @@
 import requests
+from requests.models import Response
 
 from .constants import Color, TimeMode, Variant
 from .exceptions import HttpException
@@ -35,17 +36,25 @@ def __create_match(
     )
 
     # get the title from the response
-    text = response.text
-    title = text[text.find("<title>") + 7 : text.find("</title>")]
+    title = __get_html_title(response)
 
     # get redirect url for the match
     redirect_url = response.url
 
     # check that the url was redirected to a game url
     if redirect_url == endpoint_url:
-        raise HttpException(response.status_code, response.reason, endpoint_url, text)
+        raise HttpException(
+            response.status_code, response.reason, endpoint_url, response.text
+        )
 
     return Match(title, redirect_url, variant, time_mode, color)
+
+
+def __get_html_title(response: Response):
+    text = response.text
+    start = text.find("<title>") + len("<title>")
+    end = text.find("</title>")
+    return text[start:end]
 
 
 def real_time(
