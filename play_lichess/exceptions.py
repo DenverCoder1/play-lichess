@@ -1,5 +1,16 @@
-class HttpException(Exception):
-    """Class for exceptions caused by requests that were unsuccessful"""
+class BaseError(RuntimeError):
+    """Base exception for exceptions caused by this package"""
+
+    @property
+    def message(self):
+        raise NotImplementedError
+
+    def __str__(self):
+        return self.message
+
+
+class HttpError(BaseError):
+    """Exception caused by requests that were unsuccessful"""
 
     def __init__(
         self, status_code: int, reason: str, endpoint: str, response_text: str
@@ -9,5 +20,17 @@ class HttpException(Exception):
         self.endpoint = endpoint
         self.response_text = response_text
 
-    def __str__(self):
+    @property
+    def message(self):
         return f"{self.status_code} {self.reason} {self.endpoint}"
+
+
+class BadArgumentError(BaseError):
+    """Exception caused by invalid arguments"""
+
+    def __init__(self, description: str):
+        self.description = description
+
+    @property
+    def message(self):
+        return self.description

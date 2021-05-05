@@ -1,7 +1,8 @@
 from .option import Option
+from enum import Enum
 
 
-class Variant:
+class Variant(Option, Enum):
     """Lichess chess variants"""
 
     STANDARD = Option("Standard", 1)
@@ -16,7 +17,7 @@ class Variant:
     FROM_POSITION = Option("From Position", 3)
 
 
-class TimeMode:
+class TimeMode(Option, Enum):
     """Lichess time modes"""
 
     REALTIME = Option("Real-time", 1)
@@ -24,7 +25,7 @@ class TimeMode:
     UNLIMITED = Option("Unlimited", 0)
 
 
-class Color:
+class Color(Option, Enum):
     """Lichess possible player 1 colors"""
 
     WHITE = Option("White", "white")

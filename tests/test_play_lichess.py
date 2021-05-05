@@ -1,5 +1,6 @@
 import play_lichess
 from play_lichess.constants import TimeMode, Variant, Color
+from play_lichess.exceptions import BadArgumentError
 
 import pytest
 
@@ -27,6 +28,20 @@ def test_real_time_custom():
     assert match.variant == Variant.ANTICHESS
 
 
+def test_real_time_invalid_minutes():
+    with pytest.raises(BadArgumentError):
+        play_lichess.real_time(
+            minutes=0, increment=0, variant=Variant.ANTICHESS, color=Color.WHITE
+        )
+
+
+def test_real_time_invalid_increment():
+    with pytest.raises(BadArgumentError):
+        play_lichess.real_time(
+            minutes=0, increment=-1, variant=Variant.ANTICHESS, color=Color.WHITE
+        )
+
+
 def test_correspondence():
     match = play_lichess.correspondence()
     assert match.time_mode == TimeMode.CORRESPONDENCE
@@ -48,6 +63,13 @@ def test_correspondence_custom():
     )
     assert match.color == Color.BLACK
     assert match.variant == Variant.ATOMIC
+
+
+def test_real_time_invalid_days():
+    with pytest.raises(BadArgumentError):
+        play_lichess.correspondence(
+            days=0, variant=Variant.ANTICHESS, color=Color.WHITE
+        )
 
 
 def test_unlimited():

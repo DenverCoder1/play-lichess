@@ -2,7 +2,7 @@ import requests
 from requests.models import Response
 
 from .constants import Color, TimeMode, Variant
-from .exceptions import HttpException
+from .exceptions import BadArgumentError, HttpError
 from .match import Match
 
 
@@ -10,7 +10,7 @@ def __create_match(
     time_mode: TimeMode,
     variant: Variant,
     color: Color,
-    minutes: int = 5,
+    minutes: float = 5,
     increment: int = 8,
     days: int = 2,
 ) -> Match:
@@ -20,13 +20,13 @@ def __create_match(
 
     endpoint_url = "https://lichess.org/setup/friend"
     data = {
-        "variant": variant.value,
+        "variant": variant.data,
         "fen": "",
-        "timeMode": time_mode.value,
+        "timeMode": time_mode.data,
         "time": minutes,  # only for real time
         "increment": increment,  # only for real time
         "days": days,  # only for correspondence
-        "color": color.value,
+        "color": color.data,
     }
     headers = {"User-Agent": "Mozilla/5.0"}
     response = requests.post(
@@ -43,7 +43,7 @@ def __create_match(
 
     # check that the url was redirected to a game url
     if redirect_url == endpoint_url:
-        raise HttpException(
+        raise HttpError(
             response.status_code, response.reason, endpoint_url, response.text
         )
 
@@ -59,14 +59,14 @@ def __get_html_title(response: Response) -> str:
 
 
 def real_time(
-    minutes: int = 5,
+    minutes: float = 5,
     increment: int = 8,
     variant: Variant = Variant.STANDARD,
     color: Color = Color.RANDOM,
 ) -> Match:
     """Start a live match that two players can join
 
-    :param minutes: :class:`int`
+    :param minutes: :class:`float`
         The number of minutes for the match (excluding increment)
     :param increment: :class:`int`
         Amount of seconds to increment the clock each turn
@@ -75,6 +75,10 @@ def real_time(
     :param color: :class:`Color`
         The color that will be assigned to the first player to join the match
     """
+    if minutes <= 0:
+        raise BadArgumentError("'minutes' must be a positive number")
+    if not isinstance(increment, int) or increment < 0:
+        raise BadArgumentError("'increment' must be a non-negative whole number")
     return __create_match(
         time_mode=TimeMode.REALTIME,
         variant=variant,
@@ -98,6 +102,8 @@ def correspondence(
     :param color: :class:`Color`
         The color that will be assigned to the first player to join the match
     """
+    if not isinstance(days, int) or days <= 0:
+        raise BadArgumentError("'minutes' must be a positive whole number")
     return __create_match(
         time_mode=TimeMode.CORRESPONDENCE,
         variant=variant,
