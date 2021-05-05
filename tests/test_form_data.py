@@ -12,6 +12,7 @@ def test_real_time():
         "increment": 8,
         "days": 2,
         "color": "random",
+        "level": None,
     }
     assert data == expected
 
@@ -28,6 +29,7 @@ def test_real_time_custom():
         "increment": 0,
         "days": 2,
         "color": "white",
+        "level": None,
     }
     assert data == expected
 
@@ -42,6 +44,7 @@ def test_correspondence():
         "increment": 8,
         "days": 2,
         "color": "random",
+        "level": None,
     }
     assert data == expected
 
@@ -62,6 +65,7 @@ def test_correspondence_custom():
         "increment": 0,
         "days": 2,
         "color": "white",
+        "level": None,
     }
     assert data == expected
 
@@ -76,5 +80,21 @@ def test_unlimited():
         "increment": 8,
         "days": 2,
         "color": "random",
+        "level": None,
+    }
+    assert data == expected
+
+
+def test_ai():
+    data = main.__get_form_data(ai_level=3)
+    expected = {
+        "variant": 1,
+        "fen": "",
+        "timeMode": 1,
+        "time": 5,
+        "increment": 8,
+        "days": 2,
+        "color": "random",
+        "level": 3,
     }
     assert data == expected
