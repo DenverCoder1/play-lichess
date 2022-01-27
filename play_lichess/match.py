@@ -52,16 +52,19 @@ class Match:
     color: Color = Color.RANDOM
     url_white: Optional[str] = None
     url_black: Optional[str] = None
+    name: Optional[str] = None
     _data: Optional[dict] = None
 
     @classmethod
-    def from_data(cls: "Match", data: dict) -> "Match":
+    def from_data(cls: "Match", data: dict, name: Optional[str] = None) -> "Match":
         """Create a :class:`Match` object from a dictionary of data
 
         Parameters
         ----------
         data: :class:`dict`
             A dictionary of data to create the :class:`Match` object from
+        name: Optional[:class:`str`]
+            The name of the match
 
         Returns
         -------
@@ -89,6 +92,7 @@ class Match:
             color=Color.find_by_data(data["challenge"]["color"]),
             url_white=data["urlWhite"],
             url_black=data["urlBlack"],
+            name=name,
             _data=data,
         )
 
@@ -140,6 +144,7 @@ class Match:
             If the HTTP request fails, for example:
             If clock_limit or clock_increment is not in the valid range
             If days is not in the valid range
+            If rated is set, but there is no time control
             If a rate-limit or server error occurs
         """
         if days and (clock_limit or clock_increment):
@@ -182,7 +187,7 @@ class Match:
                         endpoint=endpoint_url,
                         response_text=await response.json(),
                     )
-                return cls.from_data(await response.json())
+                return cls.from_data(await response.json(), name)
 
 
 class RealTimeMatch(Match):
@@ -197,25 +202,6 @@ class RealTimeMatch(Match):
         fen: Optional[str] = None,
         name: Optional[str] = None,
     ) -> Coroutine[Any, Any, "Match"]:
-        """Start a real-time match that two players can join
-
-        :param rated: :class:`bool`
-            Game is rated and impacts players ratings
-        :param clock_limit: :class:`int`
-            Clock initial time in seconds. Leave blank for a correspondence match.
-            If specified, must be between 0 and 10800 seconds.
-        :param clock_increment: :class:`int`
-            Clock increment in seconds. Leave blank for a correspondence match.
-            If specified, must be between 0 and 60 seconds.
-        :param variant: :class:`Variant`
-            The variant of the match (STANDARD, ANTICHESS, CHESS960, etc.)
-            The default is STANDARD
-        :param fen: :class:`str`
-            Custom initial position (in FEN). Variant must be standard, and the game cannot be rated.
-            The default position is "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-        :param name: :class:`str`
-            Optional name for the challenge that players will see on the challenge page.
-        """
         return await super().create(
             rated=rated,
             clock_limit=clock_limit,
@@ -237,22 +223,6 @@ class CorrespondenceMatch(Match):
         fen: Optional[str] = None,
         name: Optional[str] = None,
     ) -> Coroutine[Any, Any, "Match"]:
-        """Start a real-time match that two players can join
-
-        :param rated: :class:`bool`
-            Game is rated and impacts players ratings
-        :param days: :class:`int`
-            Initial time in days for correspondence matches. Leave blank for a live or unlimited match.
-            If specified, must be between 1, 2, 3, 5, 7, 10, or 14 days.
-        :param variant: :class:`Variant`
-            The variant of the match (STANDARD, ANTICHESS, CHESS960, etc.)
-            The default is STANDARD
-        :param fen: :class:`str`
-            Custom initial position (in FEN). Variant must be standard, and the game cannot be rated.
-            The default position is "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-        :param name: :class:`str`
-            Optional name for the challenge that players will see on the challenge page.
-        """
         return await super().create(
             rated=rated,
             clock_limit=None,
@@ -274,19 +244,6 @@ class UnlimitedMatch(Match):
         fen: Optional[str] = None,
         name: Optional[str] = None,
     ) -> Coroutine[Any, Any, "Match"]:
-        """Start a unlimited time match that two players can join
-
-        :param rated: :class:`bool`
-            Game is rated and impacts players ratings
-        :param variant: :class:`Variant`
-            The variant of the match (STANDARD, ANTICHESS, CHESS960, etc.)
-            The default is STANDARD
-        :param fen: :class:`str`
-            Custom initial position (in FEN). Variant must be standard, and the game cannot be rated.
-            The default position is "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-        :param name: :class:`str`
-            Optional name for the challenge that players will see on the challenge page.
-        """
         return await super().create(
             rated=rated,
             clock_limit=None,

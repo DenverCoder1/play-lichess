@@ -22,7 +22,7 @@ class HttpError(BaseError):
 
     @property
     def message(self):
-        return f"{self.status_code} {self.reason} {self.endpoint}"
+        return f"{self.status_code} {self.reason} {self.endpoint}\n{self.response_text}"
 
 
 class BadArgumentError(BaseError):

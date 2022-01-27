@@ -1,7 +1,7 @@
 __import__("sys").path.append(".")
 from play_lichess import Match, RealTimeMatch, CorrespondenceMatch
 from play_lichess.types import TimeControlType, TimeMode, Variant, Color
-from play_lichess.exceptions import BadArgumentError
+from play_lichess.exceptions import BadArgumentError, HttpError
 
 import pytest
 
@@ -29,8 +29,7 @@ async def test_real_time():
 async def test_create_unlimited():
     match = await CorrespondenceMatch.create(
         variant=Variant.STANDARD,
-        color=Color.WHITE,
-        rated=True,
+        rated=False,
         name="Test",
     )
 
@@ -38,13 +37,31 @@ async def test_create_unlimited():
     assert match.challenger is None
     assert match.dest_user is None
     assert match.variant == Variant.STANDARD
-    assert match.rated is True
+    assert match.rated is False
     assert match.speed == TimeMode.CORRESPONDENCE
     assert match.time_control.type == TimeControlType.UNLIMITED
     assert match.time_control.limit is None
     assert match.time_control.increment is None
     assert match.time_control.show is None
     assert match.color == Color.WHITE
+    assert match.name == "Test"
+
+async def test_create_rated():
+    match = await RealTimeMatch.create(
+        clock_limit=6 * 60,
+        clock_increment=0,
+        variant=Variant.STANDARD,
+        rated=True,
+    )
+
+async def test_create_unlimited_rated():
+    with pytest.raises(HttpError):
+        match = await CorrespondenceMatch.create(
+            variant=Variant.STANDARD,
+            rated=False,
+            name="Test",
+        )
+
 
 
 async def test_real_time_lower_bound_minutes():
