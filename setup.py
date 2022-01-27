@@ -1,21 +1,9 @@
 # /usr/bin/env python
 import os
+import re
 from typing import List
 from setuptools import setup
-from setuptools.command.test import test as TestCommand, Command
-
-
-class PyTest(TestCommand):
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = ["tests", "-s"]
-        self.test_suite = True
-
-    def run_tests(self):
-        import pytest
-
-        errno = pytest.main(self.test_args)
-        raise SystemExit(errno)
+from setuptools.command.test import Command
 
 
 class LintCommand(Command):
@@ -52,15 +40,28 @@ class LintCommand(Command):
         raise SystemExit(report.total_errors > 0)
 
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+version = ""
+with open(os.path.join("play_lichess", "__init__.py")) as f:
+    version = re.search(
+        r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE
+    ).group(1)
 
-with open("requirements.txt") as fh:
-    requirements = fh.read().split("\n")
+if not version:
+    raise RuntimeError("version is not set")
+
+long_description = ""
+if os.path.exists("README.md"):
+    with open("README.md", "r") as f:
+        long_description = f.read()
+
+requirements = []
+if os.path.exists("requirements.txt"):
+    with open("requirements.txt", "r") as f:
+        requirements = f.read().splitlines()
 
 setup(
     name="play-lichess",
-    version="0.1.3",
+    version=version,
     author="Jonah Lawrence",
     author_email="jonah@freshidea.com",
     description="Module for creating match links on Lichess that players can join",
@@ -78,16 +79,9 @@ setup(
         "Intended Audience :: Developers",
         "Topic :: Utilities",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     install_requires=[requirements],
-    setup_requires=[
-        "flake8>=3.8,<4",
-    ],
-    tests_require=[
-        "pytest>=6.2,<7",
-    ],
     cmdclass={
-        "test": PyTest,
         "lint": LintCommand,
     },
 )

@@ -1,3 +1,10 @@
-from .main import real_time, correspondence, unlimited, create
+from .match import *
 
-__all__ = ["real_time", "correspondence", "unlimited", "create"]
+__version__ = "1.0.0"
+
+__all__ = [
+    "__version__",
+    "Match",
+    "RealTimeMatch",
+    "CorrespondenceMatch",
+]

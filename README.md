@@ -134,11 +134,12 @@ match3 = play_lichess.create(TimeMode.UNLIMITED)
 
 To run tests (pytest)
 
-``python setup.py test``
+``pip install -U tox``
+
+``tox``
 
 To lint (flake8):
 
-``pip install flake8==3.8.4 pytest``
+``pip install flake8==3.8.4``
 
 ``python setup.py lint``
-

@@ -1,4 +1,4 @@
-from play_lichess.constants import Color, TimeMode, Variant
+from play_lichess.types import Color, TimeMode, Variant
 
 
 def test_option_find():
@@ -12,12 +12,14 @@ def test_option_find():
     assert Variant.find("Atomic") == Variant.ATOMIC
     assert Variant.find("Horde") == Variant.HORDE
     assert Variant.find("Racing Kings") == Variant.RACING_KINGS
-    assert Variant.find("From Position") == Variant.FROM_POSITION
 
     # Time modes
-    assert TimeMode.find("Real-time") == TimeMode.REALTIME
+    assert TimeMode.find("Ultra-Bullet") == TimeMode.ULTRABULLET
+    assert TimeMode.find("Bullet") == TimeMode.BULLET
+    assert TimeMode.find("Blitz") == TimeMode.BLITZ
+    assert TimeMode.find("Rapid") == TimeMode.RAPID
+    assert TimeMode.find("Classical") == TimeMode.CLASSICAL
     assert TimeMode.find("Correspondence") == TimeMode.CORRESPONDENCE
-    assert TimeMode.find("Unlimited") == TimeMode.UNLIMITED
 
     # Colors
     assert Color.find("White") == Color.WHITE

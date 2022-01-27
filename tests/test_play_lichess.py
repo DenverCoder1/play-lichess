@@ -1,47 +1,94 @@
-import play_lichess
-from play_lichess.constants import TimeMode, Variant, Color
+__import__("sys").path.append(".")
+from play_lichess import Match, RealTimeMatch, CorrespondenceMatch
+from play_lichess.types import TimeControlType, TimeMode, Variant, Color
 from play_lichess.exceptions import BadArgumentError
 
 import pytest
 
 
-def test_real_time():
-    match = play_lichess.real_time(
-        minutes=6, increment=0, variant=Variant.ANTICHESS, color=Color.WHITE
+async def test_real_time():
+    match = await RealTimeMatch.create(
+        clock_limit=6 * 60,
+        clock_increment=0,
+        variant=Variant.ANTICHESS,
     )
-    assert match.time_mode == TimeMode.REALTIME
-    assert len(match.link) == len("https://lichess.org/12345678")
-    expected_title = "Blitz (6+0) Antichess casual Chess • Open challenge • lichess.org"
-    assert match.title == expected_title
-    assert match.color == Color.WHITE
+
+    assert match.status == "created"
+    assert match.challenger is None
+    assert match.dest_user is None
     assert match.variant == Variant.ANTICHESS
-
-
-def test_create_unlimited():
-    match = play_lichess.create(TimeMode.UNLIMITED)
-    assert match.time_mode == TimeMode.UNLIMITED
-    assert len(match.link) == len("https://lichess.org/12345678")
-    assert match.title == "Correspondence casual Chess • Open challenge • lichess.org"
+    assert match.rated is False
+    assert match.speed == TimeMode.BLITZ
+    assert match.time_control.type == TimeControlType.CLOCK
+    assert match.time_control.limit == 6 * 60
+    assert match.time_control.increment == 0
+    assert match.time_control.show == "6+0"
     assert match.color == Color.RANDOM
+
+
+async def test_create_unlimited():
+    match = await CorrespondenceMatch.create(
+        variant=Variant.STANDARD,
+        color=Color.WHITE,
+        rated=True,
+        name="Test",
+    )
+
+    assert match.status == "created"
+    assert match.challenger is None
+    assert match.dest_user is None
     assert match.variant == Variant.STANDARD
+    assert match.rated is True
+    assert match.speed == TimeMode.CORRESPONDENCE
+    assert match.time_control.type == TimeControlType.UNLIMITED
+    assert match.time_control.limit is None
+    assert match.time_control.increment is None
+    assert match.time_control.show is None
+    assert match.color == Color.WHITE
 
 
-def test_real_time_invalid_minutes():
+async def test_real_time_lower_bound_minutes():
     with pytest.raises(BadArgumentError):
-        play_lichess.real_time(
-            minutes=0, increment=0, variant=Variant.ANTICHESS, color=Color.WHITE
+        await RealTimeMatch.create(
+            clock_limit=0,
+            clock_increment=0,
+            variant=Variant.STANDARD,
         )
 
 
-def test_real_time_invalid_increment():
+async def test_real_time_upper_bound_minutes():
     with pytest.raises(BadArgumentError):
-        play_lichess.real_time(
-            minutes=0, increment=-1, variant=Variant.ANTICHESS, color=Color.WHITE
+        await RealTimeMatch.create(
+            clock_limit=10800,
+            clock_increment=0,
+            variant=Variant.STANDARD,
         )
 
 
-def test_real_time_invalid_days():
+async def test_real_time_lower_bound_increment():
     with pytest.raises(BadArgumentError):
-        play_lichess.correspondence(
-            days=0, variant=Variant.ANTICHESS, color=Color.WHITE
+        await RealTimeMatch.create(
+            clock_limit=6 * 60,
+            clock_increment=-1,
+            variant=Variant.STANDARD,
         )
+
+
+async def test_real_time_upper_bound_increment():
+    with pytest.raises(BadArgumentError):
+        await RealTimeMatch.create(
+            clock_limit=6 * 60,
+            clock_increment=60,
+            variant=Variant.STANDARD,
+        )
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    asyncio.run(test_real_time())
+    asyncio.run(test_create_unlimited())
+    asyncio.run(test_real_time_lower_bound_minutes())
+    asyncio.run(test_real_time_upper_bound_minutes())
+    asyncio.run(test_real_time_lower_bound_increment())
+    asyncio.run(test_real_time_upper_bound_increment())

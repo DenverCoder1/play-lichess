@@ -11,16 +11,45 @@ class Option(NamedTuple):
         return self.description
 
     @classmethod
-    def find(cls, description: str) -> "Option":
+    def find_by_description(cls, description: str) -> "Option":
         """Get an option from a description
 
         Examples:
-        ``Variant.find("Antichess")``
-        ``Color.find("White")``
-        ``TimeMode.find("Real-time")``
+        ``Variant.find_by_description("Antichess")``
+        ``Color.find_by_description("White")``
+        ``TimeMode.find_by_description("Real-time")``
         """
         options: List[Option] = list(cls)
         for option in options:
             if description == option.description:
                 return option
         raise ValueError("Unknown option")
+
+    @classmethod
+    def find_by_data(cls, data: str) -> "Option":
+        """Get an option from its data
+
+        Examples:
+        ``Variant.find_by_data("antichess")``
+        ``Color.find_by_data("white")``
+        ``TimeMode.find_by_data("ultraBullet")``
+        """
+        options: List[Option] = list(cls)
+        for option in options:
+            if data == option.data:
+                return option
+        raise ValueError("Unknown option")
+
+    @classmethod
+    def find(cls, key: str) -> "Option":
+        """Get an option from description or data
+
+        Examples:
+        ``Variant.find("Antichess")``
+        ``Color.find("White")``
+        ``TimeMode.find("Real-time")``
+        """
+        try:
+            return cls.find_by_description(key)
+        except ValueError:
+            return cls.find_by_data(key)
