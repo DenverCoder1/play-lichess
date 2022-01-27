@@ -5,6 +5,9 @@ class BaseError(RuntimeError):
     def message(self):
         raise NotImplementedError
 
+    def __repr__(self):
+        return self.message
+
     def __str__(self):
         return self.message
 

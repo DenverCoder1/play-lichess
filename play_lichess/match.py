@@ -117,7 +117,7 @@ class Match:
             If specified, must be between 0 and 10800 seconds.
         :param clock_increment: :class:`int`
             Clock increment in seconds. Leave blank for a correspondence or unlimited match.
-            If specified, must be between 0 and 60 seconds.
+            If specified, must be between 0 and 180 seconds.
         :param days: :class:`int`
             Days per turn for correspondence matches. Leave blank for a live or unlimited match.
             If specified, must be between 1, 2, 3, 5, 7, 10, or 14 days.
@@ -138,14 +138,15 @@ class Match:
         Raises
         ------
         :class:`BadArgumentError`
-            If days is set and clock_limit or clock_increment is also set
-            If one of clock_limit or clock_increment is set but the other is not
+            If days is set and clock_limit or clock_increment is also set.
+            If one of clock_limit or clock_increment is set but the other is not.
         :class:`HttpError`
             If the HTTP request fails, for example:
-            If clock_limit or clock_increment is not in the valid range
-            If days is not in the valid range
-            If rated is set, but there is no time control
-            If a rate-limit or server error occurs
+            If clock_limit or clock_increment is not in the valid range.
+            If clock_limit and clock_increment are both set to 0.
+            If days is not in the valid range.
+            If rated is set, but there is no time control.
+            If a rate-limit or server error occurs.
         """
         if days and (clock_limit or clock_increment):
             raise BadArgumentError(
