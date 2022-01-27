@@ -1,7 +1,8 @@
 from dataclasses import dataclass
-from typing import Optional
-from .option import Option
 from enum import Enum
+from typing import Optional
+
+from .option import Option
 
 
 class Variant(Option, Enum):
@@ -19,7 +20,7 @@ class Variant(Option, Enum):
 
 
 class TimeMode(Option, Enum):
-    """Lichess time modes"""
+    """Lichess time modes / speeds"""
 
     ULTRABULLET = Option("Ultra-Bullet", "ultraBullet")
     BULLET = Option("Bullet", "bullet")
@@ -30,7 +31,7 @@ class TimeMode(Option, Enum):
 
 
 class Color(Option, Enum):
-    """Lichess possible player 1 colors"""
+    """Lichess possible colors for the first player to join a match"""
 
     WHITE = Option("White", "white")
     BLACK = Option("Black", "black")
@@ -38,7 +39,7 @@ class Color(Option, Enum):
 
 
 class TimeControlType(Option, Enum):
-    """Lichess time modes"""
+    """Lichess time control types"""
 
     UNLIMITED = Option("Unlimited", "unlimited")
     CLOCK = Option("Clock", "clock")
@@ -47,15 +48,17 @@ class TimeControlType(Option, Enum):
 @dataclass
 class TimeControl:
     """
+    Class representing a time control
+
     Attributes
     ----------
 
     type: :class:`TimeControlType`
         The type of time control (clock or unlimited)
     limit: Optional[:class:`int`]
-        The clock time limit in seconds
+        The clock time limit in seconds if real-time
     increment: Optional[:class:`int`]
-        The clock increment in seconds
+        The clock increment in seconds if real-time
     show: Optional[:class:`str`]
         The time control string for display (eg. "5+2")
     """
@@ -88,22 +91,22 @@ class User:
         The user's Lichess ID
     name: str
         The user's Lichess username
-    online: bool
+    online: Optional[bool]
         Whether the user is online
-    provisional: bool
+    provisional: Optional[bool]
         Whether the user is provisional
-    rating: int
+    rating: Optional[:class:`int`]
         The user's Lichess rating
-    title: str
+    title: Optional[:class:`str`]
         The user's Lichess title
     """
 
     id: str
     name: str
-    online: bool
-    provisional: bool
-    rating: int
-    title: str
+    online: Optional[bool]
+    provisional: Optional[bool]
+    rating: Optional[int]
+    title: Optional[str]
 
     @classmethod
     def from_data(cls: "User", data: dict) -> "User":
@@ -122,8 +125,8 @@ class User:
         return cls(
             id=data["id"],
             name=data["username"],
-            online=data["online"],
-            provisional=data["provisional"],
-            rating=data["rating"],
-            title=data["title"],
+            online=data.get("online", None),
+            provisional=data.get("provisional", None),
+            rating=data.get("rating", None),
+            title=data.get("title", None),
         )

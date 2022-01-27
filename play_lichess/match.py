@@ -40,8 +40,6 @@ class Match:
         The url of the black player
     """
 
-    DEFAULT_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-
     challenge_id: str
     challenge_url: str
     status: str
@@ -54,6 +52,7 @@ class Match:
     color: Color = Color.RANDOM
     url_white: Optional[str] = None
     url_black: Optional[str] = None
+    _data: Optional[dict] = None
 
     @classmethod
     def from_data(cls: "Match", data: dict) -> "Match":
@@ -90,6 +89,7 @@ class Match:
             color=Color.find_by_data(data["challenge"]["color"]),
             url_white=data["urlWhite"],
             url_black=data["urlBlack"],
+            _data=data,
         )
 
     @classmethod
@@ -99,6 +99,7 @@ class Match:
         rated: bool = False,
         clock_limit: Optional[int] = 5,
         clock_increment: Optional[int] = 0,
+        days: Optional[int] = None,
         variant: Variant = Variant.STANDARD,
         fen: Optional[str] = None,
         name: Optional[str] = None,
@@ -108,11 +109,14 @@ class Match:
         :param rated: :class:`bool`
             Game is rated and impacts players ratings
         :param clock_limit: :class:`int`
-            Clock initial time in seconds. Leave blank for a correspondence match.
+            Clock initial time in seconds. Leave blank for a correspondence or unlimited match.
             If specified, must be between 0 and 10800 seconds.
         :param clock_increment: :class:`int`
-            Clock increment in seconds. Leave blank for a correspondence match.
+            Clock increment in seconds. Leave blank for a correspondence or unlimited match.
             If specified, must be between 0 and 60 seconds.
+        :param days: :class:`int`
+            Days per turn for correspondence matches. Leave blank for a live or unlimited match.
+            If specified, must be between 1, 2, 3, 5, 7, 10, or 14 days.
         :param variant: :class:`Variant`
             The variant of the match (STANDARD, ANTICHESS, CHESS960, etc.)
             The default is STANDARD
@@ -121,16 +125,32 @@ class Match:
             The default position is "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
         :param name: :class:`str`
             Optional name for the challenge that players will see on the challenge page.
+
+        Returns
+        -------
+        :class:`Match`
+            A :class:`Match` object with the data from the API
+
+        Raises
+        ------
+        :class:`BadArgumentError`
+            If days is set and clock_limit or clock_increment is also set
+            If one of clock_limit or clock_increment is set but the other is not
+        :class:`HttpError`
+            If the HTTP request fails, for example:
+            If clock_limit or clock_increment is not in the valid range
+            If days is not in the valid range
+            If a rate-limit or server error occurs
         """
-        if clock_limit is not None and not 0 <= clock_limit <= 10800:
-            raise BadArgumentError("clock_limit must be between 0 and 10800 seconds")
-        if clock_increment is not None and not 0 <= clock_increment <= 60:
-            raise BadArgumentError("clock_increment must be between 0 and 60 seconds")
-        if (clock_limit is None) ^ (clock_increment is None):
+        if days and (clock_limit or clock_increment):
+            raise BadArgumentError(
+                "days cannot be set with clock_limit or clock_increment"
+            )
+        if not days and (clock_limit is None) ^ (clock_increment is None):
             raise BadArgumentError(
                 "Both clock_limit and clock_increment must be specified or neither"
             )
-        if fen is not None and fen != cls.DEFAULT_FEN:
+        if fen is not None:
             if variant != Variant.STANDARD:
                 raise BadArgumentError(
                     "fen can only be specified for STANDARD variants"
@@ -144,11 +164,12 @@ class Match:
             "clock.limit": clock_limit,
             "clock.increment": clock_increment,
             "variant": variant.value.data,
+            "days": days,
             "fen": fen,
             "name": name,
         }
         data = json.dumps({k: v for k, v in params.items() if v is not None})
-        headers = {"User-Agent": "Mozilla/5.0", "Content-Type": "application/json"}
+        headers = {"User-Agent": "play-lichess", "Content-Type": "application/json"}
 
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -211,11 +232,49 @@ class CorrespondenceMatch(Match):
         cls: "CorrespondenceMatch",
         *,
         rated: bool = False,
+        days: Optional[int] = None,
         variant: Variant = Variant.STANDARD,
         fen: Optional[str] = None,
         name: Optional[str] = None,
     ) -> Coroutine[Any, Any, "Match"]:
-        """Start a correspondence match that two players can join
+        """Start a real-time match that two players can join
+
+        :param rated: :class:`bool`
+            Game is rated and impacts players ratings
+        :param days: :class:`int`
+            Initial time in days for correspondence matches. Leave blank for a live or unlimited match.
+            If specified, must be between 1, 2, 3, 5, 7, 10, or 14 days.
+        :param variant: :class:`Variant`
+            The variant of the match (STANDARD, ANTICHESS, CHESS960, etc.)
+            The default is STANDARD
+        :param fen: :class:`str`
+            Custom initial position (in FEN). Variant must be standard, and the game cannot be rated.
+            The default position is "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+        :param name: :class:`str`
+            Optional name for the challenge that players will see on the challenge page.
+        """
+        return await super().create(
+            rated=rated,
+            clock_limit=None,
+            clock_increment=None,
+            days=days,
+            variant=variant,
+            fen=fen,
+            name=name,
+        )
+
+
+class UnlimitedMatch(Match):
+    @classmethod
+    async def create(
+        cls: "UnlimitedMatch",
+        *,
+        rated: bool = False,
+        variant: Variant = Variant.STANDARD,
+        fen: Optional[str] = None,
+        name: Optional[str] = None,
+    ) -> Coroutine[Any, Any, "Match"]:
+        """Start a unlimited time match that two players can join
 
         :param rated: :class:`bool`
             Game is rated and impacts players ratings
@@ -232,6 +291,7 @@ class CorrespondenceMatch(Match):
             rated=rated,
             clock_limit=None,
             clock_increment=None,
+            days=None,
             variant=variant,
             fen=fen,
             name=name,

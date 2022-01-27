@@ -46,8 +46,9 @@ class Option(NamedTuple):
 
         Examples:
         ``Variant.find("Antichess")``
-        ``Color.find("White")``
+        ``Variant.find("ultraBullet")``
         ``TimeMode.find("Real-time")``
+        ``TimeMode.find("realTime")``
         """
         try:
             return cls.find_by_description(key)
