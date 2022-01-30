@@ -7,139 +7,158 @@
 
 Python module for creating match links on Lichess that two players can join
 
-- [play-lichess](#play-lichess)
-  - [📥 Installation](#-installation)
-  - [🧑‍💻 Usage](#-usage)
-    - [Start a real-time match](#start-a-real-time-match)
-    - [Start a correspondence match](#start-a-correspondence-match)
-    - [Start an unlimited time match](#start-an-unlimited-time-match)
-    - [Specify game options](#specify-game-options)
-    - [Alternate syntax](#alternate-syntax)
-  - [🔧 Options](#-options)
-    - [Real-time](#real-time)
-    - [Correspondence](#correspondence)
-    - [Unlimited](#unlimited)
-  - [🧰 Development](#-development)
-
+- [📥 Installation](#-installation)
+- [🧑‍💻 Usage](#-usage)
+  - [Start a real-time match](#start-a-real-time-match)
+  - [Start a correspondence match](#start-a-correspondence-match)
+  - [Start an unlimited time match](#start-an-unlimited-time-match)
+  - [Specify game options](#specify-game-options)
+  - [Alternate syntax](#alternate-syntax)
+- [🔧 Options](#-options)
+  - [Real-time](#real-time)
+  - [Correspondence](#correspondence)
+  - [Unlimited](#unlimited)
+- [🧰 Development](#-development)
 
 ## 📥 Installation
 
-``pip install play-lichess``
-
+`pip install play-lichess`
 
 ## 🧑‍💻 Usage
 
 ### Start a real-time match
 
 ```py
-import play_lichess
+from play_lichess import RealTimeMatch
 
-match = play_lichess.real_time()
+async def create_match():
+    match = await RealTimeMatch.create()
 
-print(match.link)  # eg. https://lichess.org/8KbWoJyU
-print(match.title)  # Rapid (5+8) casual Chess • Open challenge • lichess.org
-print(match.variant)  # Standard
-print(match.color)  # Random
-print(match.time_mode)  # Real-time
+    print(match.challenge_id)       # e.g. 'f1S4BBYW'
+    print(match.challenge_url)      # e.g. 'https://lichess.org/f1S4BBYW'
+    print(match.status)             # 'created'
+    print(match.variant)            # Variant.STANDARD
+    print(match.rated)              # False
+    print(match.speed)              # TimeMode.BLITZ
+    print(match.time_control.show)  # '5+0'
+    print(match.color)              # Color.RANDOM
+    print(match.url_white)          # e.g. 'https://lichess.org/f1S4BBYW?color=white'
+    print(match.url_black)          # e.g. 'https://lichess.org/f1S4BBYW?color=black'
+    print(match.name)               # None
+
+asyncio.run(create_match())  # import asyncio to call async functions outside event loop
 ```
 
 ### Start a correspondence match
 
-```py
-import play_lichess
-
-match = play_lichess.correspondence()
-
-print(match.link)  # eg. https://lichess.org/8KbWoJyU
-print(match.title)  # Correspondence casual Chess • Open challenge • lichess.org
-print(match.variant)  # Standard
-print(match.color)  # Random
-print(match.time_mode)  # Correspondence
-```
+Coming soon. This is not yet supported by the Lichess API.
 
 ### Start an unlimited time match
 
 ```py
-import play_lichess
+from play_lichess import UnlimitedMatch
 
-match = play_lichess.unlimited()
+async def unlimited_correspondence_match():
+    match = await UnlimitedMatch.create()
 
-print(match.link)  # eg. https://lichess.org/8KbWoJyU
-print(match.title)  # Correspondence casual Chess • Open challenge • lichess.org
-print(match.variant)  # Standard
-print(match.color)  # Random
-print(match.time_mode)  # Unlimited
+    print(match.challenge_id)       # e.g. 'JLA868mV'
+    print(match.challenge_url)      # e.g. 'https://lichess.org/JLA868mV'
+    print(match.status)             # 'created'
+    print(match.variant)            # Variant.STANDARD
+    print(match.rated)              # False
+    print(match.speed)              # TimeMode.CORRESPONDENCE
+    print(match.time_control.type)  # TimeControlType.UNLIMITED
+    print(match.color)              # Color.RANDOM
+    print(match.url_white)          # e.g. 'https://lichess.org/JLA868mV?color=white'
+    print(match.url_black)          # e.g. 'https://lichess.org/JLA868mV?color=black'
+    print(match.name)               # None
 ```
 
 ### Specify game options
 
 ```py
-import play_lichess
-from play_lichess.constants import Variant, Color
+from play_lichess import RealTimeMatch
+from play_lichess.types import Variant, Color
 
-match = play_lichess.real_time(
-    minutes=6, 
-    increment=0, 
-    variant=Variant.ANTICHESS, 
-    color=Color.WHITE
-)
+async def create_match_options():
+    match: RealTimeMatch = await RealTimeMatch.create(
+        rated=False,
+        clock_limit=180,
+        clock_increment=0,
+        variant=Variant.ANTICHESS,
+        name="Test match",
+    )
 
-print(match.link)  # eg. https://lichess.org/8KbWoJyU
-print(match.title)  # Blitz (6+0) casual Chess • Open challenge • lichess.org
-print(match.variant)  # Antichess
-print(match.color)  # White
-print(match.time_mode)  # Real-time
+    print(match.challenge_id)       # e.g. 'cuZGwbcO'
+    print(match.challenge_url)      # e.g. 'https://lichess.org/cuZGwbcO'
+    print(match.status)             # 'created'
+    print(match.variant)            # Variant.ANTICHESS
+    print(match.rated)              # False
+    print(match.speed)              # TimeMode.BLITZ
+    print(match.time_control.show)  # '3+0'
+    print(match.color)              # Color.RANDOM
+    print(match.url_white)          # e.g. 'https://lichess.org/cuZGwbcO?color=white'
+    print(match.url_black)          # e.g. 'https://lichess.org/cuZGwbcO?color=black'
+    print(match.name)               # 'Test match'
 ```
 
 ### Alternate syntax
 
 ```py
-import play_lichess
-from play_lichess.constants import TimeMode, Variant, Color
+from play_lichess import Match
+from play_lichess.types import TimeMode, Variant, Color
 
-match1 = play_lichess.create(time_mode=TimeMode.REALTIME, minutes=6, increment=0)
-
-match2 = play_lichess.create(time_mode=TimeMode.CORRESPONDENCE, days=3)
-
-match3 = play_lichess.create(TimeMode.UNLIMITED)
+async def create_any_match():
+    # real-time
+    match1 = Match.create(clock_limit=180, clock_increment=0)
+    # unlimited time
+    match2 = Match.create(clock_limit=None, clock_increment=None)
+    # correspondence (not yet supported by Lichess API)
+    match3 = Match.create(days=1, clock_limit=None, clock_increment=None)
 ```
 
 ## 🔧 Options
 
 ### Real-time
 
-| Argument    | Type      | Default    | Description                                         |
-| ----------- | --------- | ---------- | --------------------------------------------------- |
-| `minutes`   | `int`     | `5`        | The number of minutes for the match                 |
-| `increment` | `int`     | `8`        | Amount of seconds to increment the clock each turn  |
-| `variant`   | `Variant` | `STANDARD` | The variant of the match (STANDARD, CHESS960, etc.) |
-| `color`     | `Color`   | `RANDOM`   | The color assigned to the first player that joins   |
+| Argument          | Type      | Default        | Description                                         |
+| ----------------- | --------- | -------------- | --------------------------------------------------- |
+| `rated`           | `bool`    | `False`        | Whether the match is rated or not.                  |
+| `clock_limit`     | `int`     | `300`          | The time limit in seconds.                          |
+| `clock_increment` | `int`     | `0`            | The time increment in seconds.                      |
+| `variant`         | `Variant` | `STANDARD`     | The variant of the match (STANDARD, CHESS960, etc.) |
+| `fen`             | `str`     | Start position | The FEN string of the starting position.            |
+| `name`            | `str`     | `None`         | The name of the match displayed when joining.       |
 
 ### Correspondence
 
-| Argument  | Type      | Default    | Description                                         |
-| --------- | --------- | ---------- | --------------------------------------------------- |
-| `days`    | `int`     | `2`        | The number of days for the match                    |
-| `variant` | `Variant` | `STANDARD` | The variant of the match (STANDARD, CHESS960, etc.) |
-| `color`   | `Color`   | `RANDOM`   | The color assigned to the first player that joins   |
+| Argument  | Type      | Default        | Description                                         |
+| --------- | --------- | -------------- | --------------------------------------------------- |
+| `rated`   | `bool`    | `False`        | Whether the match is rated or not.                  |
+| `days`    | `int`     | `1`            | The number of days for each player.                 |
+| `variant` | `Variant` | `STANDARD`     | The variant of the match (STANDARD, CHESS960, etc.) |
+| `fen`     | `str`     | Start position | The FEN string of the starting position.            |
+| `name`    | `str`     | `None`         | The name of the match displayed when joining.       |
 
 ### Unlimited
 
-| Argument  | Type      | Default    | Description                                         |
-| --------- | --------- | ---------- | --------------------------------------------------- |
-| `variant` | `Variant` | `STANDARD` | The variant of the match (STANDARD, CHESS960, etc.) |
-| `color`   | `Color`   | `RANDOM`   | The color assigned to the first player that joins   |
+| Argument  | Type      | Default        | Description                                         |
+| --------- | --------- | -------------- | --------------------------------------------------- |
+| `variant` | `Variant` | `STANDARD`     | The variant of the match (STANDARD, CHESS960, etc.) |
+| `color`   | `Color`   | `RANDOM`       | The color assigned to the first player that joins   |
+| `fen`     | `str`     | Start position | The FEN string of the starting position.            |
+| `name`    | `str`     | `None`         | The name of the match displayed when joining.       |
 
 ## 🧰 Development
 
 To run tests (pytest)
 
-``pip install -U tox``
+`pip install -U tox`
 
-``tox``
+`tox`
 
 To lint (flake8):
 
-``pip install flake8==3.8.4``
+`pip install flake8==3.8.4`
 
-``python setup.py lint``
+`python setup.py lint`
