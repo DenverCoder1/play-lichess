@@ -71,15 +71,6 @@ async def test_create_rated():
 
 
 @pytest.mark.asyncio
-async def test_create_unlimited_rated():
-    with pytest.raises(HttpError):
-        await CorrespondenceMatch.create(
-            rated=True,
-            name="Test",
-        )
-
-
-@pytest.mark.asyncio
 async def test_real_time_lower_bound_minutes():
     with pytest.raises(HttpError):
         await RealTimeMatch.create(

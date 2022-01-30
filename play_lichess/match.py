@@ -219,7 +219,7 @@ class CorrespondenceMatch(Match):
         cls: "CorrespondenceMatch",
         *,
         rated: bool = False,
-        days: Optional[int] = None,
+        days: Optional[int] = 1,
         variant: Variant = Variant.STANDARD,
         fen: Optional[str] = None,
         name: Optional[str] = None,
@@ -240,13 +240,12 @@ class UnlimitedMatch(Match):
     async def create(
         cls: "UnlimitedMatch",
         *,
-        rated: bool = False,
         variant: Variant = Variant.STANDARD,
         fen: Optional[str] = None,
         name: Optional[str] = None,
     ) -> Coroutine[Any, Any, "Match"]:
         return await super().create(
-            rated=rated,
+            rated=False,
             clock_limit=None,
             clock_increment=None,
             days=None,
