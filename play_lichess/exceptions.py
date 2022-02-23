@@ -5,6 +5,9 @@ class BaseError(RuntimeError):
     def message(self):
         raise NotImplementedError
 
+    def __repr__(self):
+        return self.message
+
     def __str__(self):
         return self.message
 
@@ -22,7 +25,7 @@ class HttpError(BaseError):
 
     @property
     def message(self):
-        return f"{self.status_code} {self.reason} {self.endpoint}"
+        return f"{self.status_code} {self.reason} {self.endpoint}\n{self.response_text}"
 
 
 class BadArgumentError(BaseError):
