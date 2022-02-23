@@ -7,18 +7,7 @@
 
 Python module for creating match links on Lichess that two players can join
 
-- [📥 Installation](#-installation)
-- [🧑‍💻 Usage](#-usage)
-  - [Start a real-time match](#start-a-real-time-match)
-  - [Start a correspondence match](#start-a-correspondence-match)
-  - [Start an unlimited time match](#start-an-unlimited-time-match)
-  - [Specify game options](#specify-game-options)
-  - [Alternate syntax](#alternate-syntax)
-- [🔧 Options](#-options)
-  - [Real-time](#real-time)
-  - [Correspondence](#correspondence)
-  - [Unlimited](#unlimited)
-- [🧰 Development](#-development)
+> Note: Until version 0.1.3, the requests were done synchronously using `requests`. Starting with version 1.0.0, all requests are done asynchronously using `aiohttp`.
 
 ## 📥 Installation
 
@@ -110,11 +99,11 @@ from play_lichess.types import TimeMode, Variant, Color
 
 async def create_any_match():
     # real-time
-    match1 = Match.create(clock_limit=180, clock_increment=0)
+    match1 = await Match.create(clock_limit=180, clock_increment=0)
     # unlimited time
-    match2 = Match.create(clock_limit=None, clock_increment=None)
+    match2 = await Match.create(clock_limit=None, clock_increment=None)
     # correspondence (not yet supported by Lichess API)
-    match3 = Match.create(days=1, clock_limit=None, clock_increment=None)
+    match3 = await Match.create(days=1, clock_limit=None, clock_increment=None)
 ```
 
 ## 🔧 Options
@@ -151,14 +140,22 @@ async def create_any_match():
 
 ## 🧰 Development
 
-To run tests (pytest)
+### To run tests (pytest/tox)
 
-`pip install -U tox`
+```bash
+# Install tox
+pip install -U tox
 
-`tox`
+# Run tests
+tox
+```
 
-To lint (flake8):
+### To lint (flake8)
 
-`pip install flake8==3.8.4`
+```bash
+# Install flake8
+pip install flake8==3.8.4
 
-`python setup.py lint`
+# Run linter
+python setup.py lint
+```
