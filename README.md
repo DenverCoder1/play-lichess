@@ -84,7 +84,7 @@ async def unlimited_correspondence_match():
 ### Specify game options
 
 ```py
-from play_lichess import RealTimeMatch, Variant, Color
+from play_lichess import RealTimeMatch, Variant
 
 async def create_match_options():
     match: RealTimeMatch = await RealTimeMatch.create(
@@ -111,7 +111,7 @@ async def create_match_options():
 ### Alternate syntax
 
 ```py
-from play_lichess import Match, TimeMode, Variant, Color
+from play_lichess import Match
 
 async def create_any_match():
     # real-time
@@ -150,7 +150,6 @@ async def create_any_match():
 | Argument  | Type      | Default        | Description                                         |
 | --------- | --------- | -------------- | --------------------------------------------------- |
 | `variant` | `Variant` | `STANDARD`     | The variant of the match (STANDARD, CHESS960, etc.) |
-| `color`   | `Color`   | `RANDOM`       | The color assigned to the first player that joins   |
 | `fen`     | `str`     | Start position | The FEN string of the starting position.            |
 | `name`    | `str`     | `None`         | The name of the match displayed when joining.       |
 
