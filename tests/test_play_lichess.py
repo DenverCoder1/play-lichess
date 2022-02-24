@@ -1,6 +1,6 @@
 __import__("sys").path.append(".")
 import pytest
-from play_lichess import CorrespondenceMatch, Match, RealTimeMatch
+from play_lichess import CorrespondenceMatch, UnlimitedMatch, Match, RealTimeMatch
 from play_lichess.exceptions import BadArgumentError, HttpError
 from play_lichess.types import Color, TimeControlType, TimeMode, Variant
 
@@ -28,6 +28,27 @@ async def test_real_time():
 
 @pytest.mark.asyncio
 async def test_create_unlimited():
+    match = await UnlimitedMatch.create(
+        variant=Variant.STANDARD,
+        name="Test",
+    )
+
+    assert match.status == "created"
+    assert match.challenger is None
+    assert match.dest_user is None
+    assert match.variant == Variant.STANDARD
+    assert match.rated is False
+    assert match.speed == TimeMode.CORRESPONDENCE
+    assert match.time_control.type == TimeControlType.UNLIMITED
+    assert match.time_control.limit is None
+    assert match.time_control.increment is None
+    assert match.time_control.show is None
+    assert match.color == Color.RANDOM
+    assert match.name == "Test"
+
+
+@pytest.mark.asyncio
+async def test_create_correspondence():
     match = await CorrespondenceMatch.create(
         variant=Variant.STANDARD,
         rated=False,
@@ -40,7 +61,8 @@ async def test_create_unlimited():
     assert match.variant == Variant.STANDARD
     assert match.rated is False
     assert match.speed == TimeMode.CORRESPONDENCE
-    assert match.time_control.type == TimeControlType.UNLIMITED
+    assert match.time_control.type == TimeControlType.CORRESPONDENCE
+    assert match.time_control.days_per_turn == 1
     assert match.time_control.limit is None
     assert match.time_control.increment is None
     assert match.time_control.show is None

@@ -40,7 +40,25 @@ asyncio.run(create_match())  # import asyncio to call async functions outside ev
 
 ### Start a correspondence match
 
-Coming soon. This is not yet supported by the Lichess API.
+```py
+from play_lichess import CorrespondenceMatch
+
+async def correspondence_match():
+    match = await CorrespondenceMatch.create()
+
+    print(match.challenge_id)               # e.g. 'KGO4ICDn'
+    print(match.challenge_url)              # e.g. 'https://lichess.org/KGO4ICDn'
+    print(match.status)                     # 'created'
+    print(match.variant)                    # Variant.STANDARD
+    print(match.rated)                      # False
+    print(match.speed)                      # TimeMode.CORRESPONDENCE
+    print(match.time_control.type)          # TimeControlType.CORRESPONDENCE
+    print(match.time_control.days_per_turn) # 1
+    print(match.color)                      # Color.RANDOM
+    print(match.url_white)                  # e.g. 'https://lichess.org/KGO4ICDn?color=white'
+    print(match.url_black)                  # e.g. 'https://lichess.org/KGO4ICDn?color=black'
+    print(match.name)                       # None
+```
 
 ### Start an unlimited time match
 
@@ -66,8 +84,7 @@ async def unlimited_correspondence_match():
 ### Specify game options
 
 ```py
-from play_lichess import RealTimeMatch
-from play_lichess.types import Variant, Color
+from play_lichess import RealTimeMatch, Variant, Color
 
 async def create_match_options():
     match: RealTimeMatch = await RealTimeMatch.create(
@@ -94,15 +111,14 @@ async def create_match_options():
 ### Alternate syntax
 
 ```py
-from play_lichess import Match
-from play_lichess.types import TimeMode, Variant, Color
+from play_lichess import Match, TimeMode, Variant, Color
 
 async def create_any_match():
     # real-time
     match1 = await Match.create(clock_limit=180, clock_increment=0)
     # unlimited time
     match2 = await Match.create(clock_limit=None, clock_increment=None)
-    # correspondence (not yet supported by Lichess API)
+    # correspondence
     match3 = await Match.create(days=1, clock_limit=None, clock_increment=None)
 ```
 
