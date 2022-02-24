@@ -90,7 +90,7 @@ class Option(NamedTuple):
 
         Returns
         -------
-        :class:`Option` 
+        :class:`Option`
             The option with the description or data
 
         Raises
