@@ -53,7 +53,6 @@ class TimeControl:
 
     Attributes
     ----------
-
     type: :class:`TimeControlType`
         The type of time control (clock or unlimited)
     limit: Optional[:class:`int`]
@@ -91,7 +90,6 @@ class User:
 
     Attributes
     ----------
-
     id: str
         The user's Lichess ID
     name: str
