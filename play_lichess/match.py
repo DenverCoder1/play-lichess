@@ -10,7 +10,7 @@ from .types import Color, TimeControl, TimeMode, User, Variant
 
 @dataclass
 class Match:
-    """Class for storing results about a created match link
+    """Class for creating matches and storing results about a created match link
 
     Attributes
     ----------
@@ -38,6 +38,8 @@ class Match:
         The url of the white player
     url_black: :class:`str`
         The url of the black player
+    name: Optional[:class:`str`]
+        The name of the match
     """
 
     challenge_id: str
@@ -110,24 +112,26 @@ class Match:
     ) -> Coroutine[Any, Any, "Match"]:
         """Start a match that two players can join
 
-        :param rated: :class:`bool`
+        Parameters
+        ----------
+        rated: :class:`bool`
             Game is rated and impacts players ratings
-        :param clock_limit: :class:`int`
+        clock_limit: :class:`int`
             Clock initial time in seconds. Leave blank for a correspondence or unlimited match.
             If specified, must be between 0 and 10800 seconds.
-        :param clock_increment: :class:`int`
+        clock_increment: :class:`int`
             Clock increment in seconds. Leave blank for a correspondence or unlimited match.
             If specified, must be between 0 and 180 seconds.
-        :param days: :class:`int`
+        days: :class:`int`
             Days per turn for correspondence matches. Leave blank for a live or unlimited match.
             If specified, must be between 1, 2, 3, 5, 7, 10, or 14 days.
-        :param variant: :class:`Variant`
+        variant: :class:`Variant`
             The variant of the match (STANDARD, ANTICHESS, CHESS960, etc.)
             The default is STANDARD
-        :param fen: :class:`str`
+        fen: :class:`str`
             Custom initial position (in FEN). Variant must be standard, and the game cannot be rated.
             The default position is "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-        :param name: :class:`str`
+        name: :class:`str`
             Optional name for the challenge that players will see on the challenge page.
 
         Returns
@@ -192,6 +196,8 @@ class Match:
 
 
 class RealTimeMatch(Match):
+    """Subclass of :class:`Match` for creating real-time matches"""
+
     @classmethod
     async def create(
         cls: "RealTimeMatch",
@@ -214,6 +220,8 @@ class RealTimeMatch(Match):
 
 
 class CorrespondenceMatch(Match):
+    """Subclass of :class:`Match` for creating correspondence matches"""
+
     @classmethod
     async def create(
         cls: "CorrespondenceMatch",
@@ -236,6 +244,8 @@ class CorrespondenceMatch(Match):
 
 
 class UnlimitedMatch(Match):
+    """Subclass of :class:`Match` for creating unlimited matches"""
+
     @classmethod
     async def create(
         cls: "UnlimitedMatch",
