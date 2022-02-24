@@ -1,9 +1,9 @@
-from .exceptions import *
-from .match import *
-from .option import *
-from .types import *
+from .exceptions import BaseError, HttpError, BadArgumentError
+from .match import Match, RealTimeMatch, CorrespondenceMatch, UnlimitedMatch
+from .option import Option
+from .types import Variant, TimeMode, Color, TimeControlType, TimeControl, User
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 __all__ = [
     "__version__",
