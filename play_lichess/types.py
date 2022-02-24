@@ -42,6 +42,7 @@ class TimeControlType(Option, Enum):
     """Lichess time control types"""
 
     UNLIMITED = Option("Unlimited", "unlimited")
+    CORRESPONDENCE = Option("Correspondence", "correspondence")
     CLOCK = Option("Clock", "clock")
 
 
@@ -61,12 +62,15 @@ class TimeControl:
         The clock increment in seconds if real-time
     show: Optional[:class:`str`]
         The time control string for display (eg. "5+2")
+    days_per_turn: Optional[:class:`int`]
+        The number of days per turn if correspondence
     """
 
     type: TimeControlType
     limit: Optional[int]
     increment: Optional[int]
     show: Optional[str]
+    days_per_turn: Optional[int]
 
     @classmethod
     def from_data(cls: "TimeControl", data: dict) -> "TimeControl":
@@ -76,6 +80,7 @@ class TimeControl:
             limit=data.get("limit", None),
             increment=data.get("increment", None),
             show=data.get("show", None),
+            days_per_turn=data.get("daysPerTurn", None),
         )
 
 
