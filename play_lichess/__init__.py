@@ -3,7 +3,7 @@ from .match import CorrespondenceMatch, Match, MatchInfo, RealTimeMatch, Unlimit
 from .option import Option
 from .types import Color, TimeControl, TimeControlType, TimeMode, User, Variant
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 __all__ = [
     "__version__",
