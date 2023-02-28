@@ -1,17 +1,21 @@
-from typing import List, NamedTuple, TypeVar
+from __future__ import annotations
 
-T = TypeVar("T")
+from typing import Any, NamedTuple, Type, TypeVar
+
+OptionT = TypeVar("OptionT", bound="Option")
 
 
 class Option(NamedTuple):
+    """Base class for options. All subclasses should inherit from this class and Enum."""
+
     description: str
-    data: T
+    data: Any
 
     def __str__(self):
         return self.description
 
     @classmethod
-    def find_by_description(cls, description: str) -> "Option":
+    def find_by_description(cls: Type[OptionT], description: str) -> OptionT:
         """Get an option from a description
 
         Examples:
@@ -35,14 +39,13 @@ class Option(NamedTuple):
         ValueError
             If the description is not found
         """
-        options: List[Option] = list(cls)
-        for option in options:
+        for option in cls:  # type: ignore  # must be an Enum
             if description == option.description:
                 return option
         raise ValueError("Unknown option")
 
     @classmethod
-    def find_by_data(cls, data: str) -> "Option":
+    def find_by_data(cls: Type[OptionT], data: str) -> OptionT:
         """Get an option from its data
 
         Examples:
@@ -66,14 +69,13 @@ class Option(NamedTuple):
         ValueError
             If the option doesn't exist
         """
-        options: List[Option] = list(cls)
-        for option in options:
+        for option in cls:  # type: ignore  # must be an Enum
             if data == option.data:
                 return option
         raise ValueError("Unknown option")
 
     @classmethod
-    def find(cls, key: str) -> "Option":
+    def find(cls: Type[OptionT], key: str) -> OptionT:
         """Get an option from description or data
 
         Examples:

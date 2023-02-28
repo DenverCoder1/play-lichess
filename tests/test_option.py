@@ -59,4 +59,6 @@ def test_option_find_by_data():
     # Time control types
     assert TimeControlType.find_by_data("unlimited") == TimeControlType.UNLIMITED
     assert TimeControlType.find_by_data("clock") == TimeControlType.CLOCK
-    assert TimeControlType.find_by_data("correspondence") == TimeControlType.CORRESPONDENCE
+    assert (
+        TimeControlType.find_by_data("correspondence") == TimeControlType.CORRESPONDENCE
+    )
