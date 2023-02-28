@@ -1,6 +1,7 @@
 __import__("sys").path.append(".")
 import pytest
-from play_lichess import CorrespondenceMatch, UnlimitedMatch, Match, RealTimeMatch
+
+from play_lichess import CorrespondenceMatch, Match, RealTimeMatch, UnlimitedMatch
 from play_lichess.exceptions import BadArgumentError, HttpError
 from play_lichess.types import Color, TimeControlType, TimeMode, Variant
 
@@ -19,6 +20,7 @@ async def test_real_time():
     assert match.variant == Variant.ANTICHESS
     assert match.rated is False
     assert match.speed == TimeMode.BLITZ
+    assert match.time_control is not None
     assert match.time_control.type == TimeControlType.CLOCK
     assert match.time_control.limit == 6 * 60
     assert match.time_control.increment == 0
@@ -39,6 +41,7 @@ async def test_create_unlimited():
     assert match.variant == Variant.STANDARD
     assert match.rated is False
     assert match.speed == TimeMode.CORRESPONDENCE
+    assert match.time_control is not None
     assert match.time_control.type == TimeControlType.UNLIMITED
     assert match.time_control.limit is None
     assert match.time_control.increment is None
@@ -61,6 +64,7 @@ async def test_create_correspondence():
     assert match.variant == Variant.STANDARD
     assert match.rated is False
     assert match.speed == TimeMode.CORRESPONDENCE
+    assert match.time_control is not None
     assert match.time_control.type == TimeControlType.CORRESPONDENCE
     assert match.time_control.days_per_turn == 1
     assert match.time_control.limit is None
@@ -85,6 +89,7 @@ async def test_create_rated():
     assert match.variant == Variant.STANDARD
     assert match.rated is True
     assert match.speed == TimeMode.RAPID
+    assert match.time_control is not None
     assert match.time_control.type == TimeControlType.CLOCK
     assert match.time_control.limit == 10 * 60
     assert match.time_control.increment == 5

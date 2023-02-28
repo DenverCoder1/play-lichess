@@ -1,8 +1,12 @@
+from __future__ import annotations
+
+
 class BaseError(RuntimeError):
     """Base exception for exceptions caused by this package"""
 
     @property
     def message(self):
+        """The message of the exception"""
         raise NotImplementedError
 
     def __repr__(self):
@@ -16,7 +20,7 @@ class HttpError(BaseError):
     """Exception caused by requests that were unsuccessful"""
 
     def __init__(
-        self, status_code: int, reason: str, endpoint: str, response_text: str
+        self, status_code: int, reason: str | None, endpoint: str, response_text: str
     ):
         self.status_code = status_code
         self.reason = reason

@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
+from typing import Type
 
 from .option import Option
 
@@ -66,13 +68,13 @@ class TimeControl:
     """
 
     type: TimeControlType
-    limit: Optional[int]
-    increment: Optional[int]
-    show: Optional[str]
-    days_per_turn: Optional[int]
+    limit: int | None
+    increment: int | None
+    show: str | None
+    days_per_turn: int | None
 
     @classmethod
-    def from_data(cls: "TimeControl", data: dict) -> "TimeControl":
+    def from_data(cls: Type["TimeControl"], data: dict) -> "TimeControl":
         """Create a time control from a dictionary"""
         return cls(
             type=TimeControlType.find_by_data(data["type"]),
@@ -94,9 +96,9 @@ class User:
         The user's Lichess ID
     name: str
         The user's Lichess username
-    online: Optional[bool]
+    online: Optional[:class:`bool`]
         Whether the user is online
-    provisional: Optional[bool]
+    provisional: Optional[:class:`bool`]
         Whether the user is provisional
     rating: Optional[:class:`int`]
         The user's Lichess rating
@@ -106,13 +108,13 @@ class User:
 
     id: str
     name: str
-    online: Optional[bool]
-    provisional: Optional[bool]
-    rating: Optional[int]
-    title: Optional[str]
+    online: bool | None
+    provisional: bool | None
+    rating: int | None
+    title: str | None
 
     @classmethod
-    def from_data(cls: "User", data: dict) -> "User":
+    def from_data(cls: Type["User"], data: dict) -> "User":
         """Create a :class:`User` object from a dictionary of data
 
         Parameters

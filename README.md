@@ -1,6 +1,6 @@
 # play-lichess
 
-[![build](https://img.shields.io/github/workflow/status/DenverCoder1/play-lichess/Python%20application/main)](https://github.com/DenverCoder1/play-lichess/actions/workflows/python-app.yml)
+[![build](https://img.shields.io/github/actions/workflow/status/DenverCoder1/play-lichess/python-app.yml?branch=main)](https://github.com/DenverCoder1/play-lichess/actions/workflows/python-app.yml)
 [![version](https://img.shields.io/pypi/v/play-lichess)](https://pypi.org/project/play-lichess/)
 [![license](https://img.shields.io/pypi/l/play-lichess)](https://github.com/DenverCoder1/play-lichess/blob/main/LICENSE)
 [![Discord](https://img.shields.io/discord/819650821314052106?color=7289DA&logo=discord&logoColor=white "Dev Pro Tips Discussion & Support Server")](https://discord.gg/fPrdqh3Zfu)
@@ -153,6 +153,20 @@ async def create_any_match():
 | `fen`     | `str`     | Start position | The FEN string of the starting position.            |
 | `name`    | `str`     | `None`         | The name of the match displayed when joining.       |
 
+### Variants
+
+Variants are defined in the `Variant` enum and include:
+
+- `Variant.STANDARD` (default)
+- `Variant.CRAZYHOUSE`
+- `Variant.CHESS960`
+- `Variant.KING_OF_THE_HILL`
+- `Variant.THREE_CHECK`
+- `Variant.ANTICHESS`
+- `Variant.ATOMIC`
+- `Variant.HORDE`
+- `Variant.RACING_KINGS`
+
 ## 🧰 Development
 
 ### To run tests (pytest/tox)
@@ -165,12 +179,12 @@ pip install -U tox
 tox
 ```
 
-### To lint (flake8)
+### To lint (pyright)
 
 ```bash
-# Install flake8
-pip install flake8==3.8.4
+# Install pyright
+pip install -U pyright
 
-# Run linter
-python setup.py lint
+# Run pyright
+pyright
 ```

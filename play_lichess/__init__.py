@@ -1,7 +1,7 @@
-from .exceptions import BaseError, HttpError, BadArgumentError
-from .match import Match, RealTimeMatch, CorrespondenceMatch, UnlimitedMatch
+from .exceptions import BadArgumentError, BaseError, HttpError
+from .match import CorrespondenceMatch, Match, MatchInfo, RealTimeMatch, UnlimitedMatch
 from .option import Option
-from .types import Variant, TimeMode, Color, TimeControlType, TimeControl, User
+from .types import Color, TimeControl, TimeControlType, TimeMode, User, Variant
 
 __version__ = "1.1.0"
 
@@ -10,6 +10,7 @@ __all__ = [
     "BaseError",
     "HttpError",
     "BadArgumentError",
+    "MatchInfo",
     "Match",
     "RealTimeMatch",
     "CorrespondenceMatch",
