@@ -28,7 +28,7 @@ jobs:
             setup.py
 
       - name: Install dependencies
-        run: python -m pip install -r requirements.txt pyright
+        run: python -m pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Set up pyright
         run: echo "PYRIGHT_VERSION=$(python -c 'import pyright; print(pyright.__pyright_version__)')" >> $GITHUB_ENV
@@ -73,7 +73,7 @@ jobs:
             setup.py
 
       - name: Install dependencies
-        run: python -m pip install -r requirements.txt mypy
+        run: python -m pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Run mypy
         run: mypy .
@@ -94,7 +94,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e ".[dev]"
+          python -m pip install -r requirements.txt -r requirements-dev.txt
           python -m pip install --pre tox-gh-actions
       - name: Test with pytest
         run: |
@@ -113,7 +113,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e ".[dev]"
+          python -m pip install -r requirements.txt -r requirements-dev.txt
           python -m pip install --pre tox-gh-actions
       - name: Test with pytest
         run: tox
