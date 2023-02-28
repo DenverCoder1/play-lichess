@@ -254,11 +254,9 @@ class RealTimeMatch(MatchInfo):
         rated: :class:`bool`
             Game is rated and impacts players ratings
         clock_limit: :class:`int`
-            Clock initial time in seconds. Leave blank for a correspondence or unlimited match.
-            If specified, must be between 0 and 10800 seconds.
+            Clock initial time in seconds. Must be between 0 and 10800 seconds.
         clock_increment: :class:`int`
-            Clock increment in seconds. Leave blank for a correspondence or unlimited match.
-            If specified, must be between 0 and 180 seconds.
+            Clock increment in seconds. Must be between 0 and 180 seconds.
         variant: :class:`Variant`
             The variant of the match (STANDARD, ANTICHESS, CHESS960, etc.)
             The default is STANDARD
@@ -276,7 +274,7 @@ class RealTimeMatch(MatchInfo):
         Raises
         ------
         :class:`BadArgumentError`
-            If one of clock_limit or clock_increment is set but the other is not.
+            If None is passed to one of clock_limit or clock_increment.
         :class:`HttpError`
             If the HTTP request fails, for example:
             If clock_limit or clock_increment is not in the valid range.
@@ -302,7 +300,7 @@ class CorrespondenceMatch(MatchInfo):
         cls: Type["CorrespondenceMatch"],
         *,
         rated: bool = False,
-        days: _NumberOfDays | None = 1,
+        days: _NumberOfDays = 1,
         variant: Variant = Variant.STANDARD,
         fen: str | None = None,
         name: str | None = None,
@@ -314,8 +312,7 @@ class CorrespondenceMatch(MatchInfo):
         rated: :class:`bool`
             Game is rated and impacts players ratings
         days: Optional[:class:`int`]
-            Days per turn for correspondence matches. Leave blank for a live or unlimited match.
-            If specified, must be 1, 2, 3, 5, 7, 10, or 14 days.
+            Days per turn for correspondence matches. Must be 1, 2, 3, 5, 7, 10, or 14 days.
         variant: :class:`Variant`
             The variant of the match (STANDARD, ANTICHESS, CHESS960, etc.)
             The default is STANDARD
